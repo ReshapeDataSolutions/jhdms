@@ -3,12 +3,16 @@
 app_title <-'DMS数据中台V5.2';
 
 # store data into rdbe in the rds database
-app_id <- 'cpdms'
+app_id <- 'jhdms'
 #upload all the library
 
 #设置链接---
 
+#数据库的配置文件,后续取消
 conn_cfg ='config/conn_cfg.R'
+
+#后续使用token取代数据库的配置文件
+erp_token ='C0426D23-1927-4314-8736-A74B2EF7A039'
 
 tstk::import(app_id = app_id)
 

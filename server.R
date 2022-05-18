@@ -137,14 +137,24 @@
        
        
        showModal(modalDialog(title = paste0("查看",user_info()$Fuser,"用户信息"),
-                             
-                             textInput('cu_info_name',label = '姓名:',value =user_info()$Fname ),
-                             textInput('cu_info_role',label = '角色:',value =user_info()$Fpermissions ),
-                             textInput('cu_info_email',label = '邮箱:',value =user_detail('Femail') ),
-                             textInput('cu_info_phone',label = '手机:',value =user_detail('Fphone') ),
-                             textInput('cu_info_rpa',label = 'RPA账号:',value =user_detail('Frpa') ),
-                             textInput('cu_info_dept',label = '部门:',value =user_detail('Fdepartment') ),
-                             textInput('cu_info_company',label = '公司:',value =user_detail('Fcompany') ),
+                             #完善信息用户信息布局
+                             fluidRow(column(6,textInput('cu_info_name',label = '姓名:',value =user_info()$Fname )),
+                                      column(6,textInput('cu_info_role',label = '角色:',value =user_info()$Fpermissions )))
+                             ,
+                             fluidRow(column(6, textInput('cu_info_email',label = '邮箱:',value =user_detail('Femail') )),
+                                      column(6,textInput('cu_info_phone',label = '手机:',value =user_detail('Fphone') )))
+                            ,
+                             fluidPage(column(6,textInput('cu_info_company',label = '公司:',value =user_detail('Fcompany') )),
+                                       column(6, textInput('cu_info_dept',label = '部门:',value =user_detail('Fdepartment') )))
+                            ,
+                            fluidPage(column(6,textInput('cu_info_businessGroup',label = '业务组:',value =user_detail('FBusinessGroup') )),
+                                      column(6, textInput('cu_info_businessMan',label = '业务员:',value =user_detail('FBusinessMan') )))
+                            ,
+                            fluidPage(column(6,textInput('cu_info_companyScope',label = '公司范围:',value =user_detail('FCompanyScope') )),
+                                      column(6, textInput('cu_info_dataScope',label = '数据范围:',value =user_detail('FDataScope') )))
+                            ,
+                            
+                          
                              
                              
                              footer = column(shiny::modalButton('确认(不保存修改)'),
@@ -213,10 +223,42 @@
       
     })
     
+    #加载所有模块业务应收逾期报表
+    var_date_overDue = tsui::var_date('saleOverdueRpt_queryDate_date')
+    shiny::observeEvent(input$saleOverdueRpt_upload_btn,{
+      print('bug1')
+      req(credentials()$user_auth)
+      print('bug2')
 
-  
-      
-
+      user_detail <-function(fkey){
+        res <-tsui::userQueryField(app_id = app_id,user =user_info()$Fuser,key = fkey)
+        return(res)
+      }
+      print('bug3')
+      Fdepartment = user_detail('Fdepartment')
+      FBusinessGroup = user_detail('FBusinessGroup')
+      FBusinessMan = user_detail('FBusinessMan')
+      FCompanyScope = user_detail('FCompanyScope')
+      FDataScope = user_detail('FDataScope')
+      FDate = as.character(var_date_overDue())
+      print(Fdepartment)
+      print(FBusinessGroup)
+      print(FBusinessMan)
+      print(FCompanyScope)
+      print(FDataScope)
+      print('bug4')
+      data  = mdlSaleOverdueRptServer::overDueRpt_Query(FDate = FDate,
+                                                        Fdepartment = Fdepartment,
+                                                        FBusinessGroup = FBusinessGroup,
+                                                        FBusinessMan = FBusinessMan,
+                                                        FCompanyScope = FCompanyScope,
+                                                        FDataScope = FDataScope)
+      print('bug5')
+      print(data)
+      tsui::run_dataTable2(id = 'saleOverdueRpt_query_dataview',data = data)
+      file_name = paste0("业务应收逾期报表_",FDate,".xlsx")
+      tsui::run_download_xlsx(id = 'saleOverdueRpt_upload_btn',data = data,filename = file_name)
+    })
   
     
     ncount_module  =nrow(module_data)
