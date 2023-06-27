@@ -14,6 +14,9 @@ conn_cfg ='config/conn_cfg.R'
 #后续使用token取代数据库的配置文件
 erp_token ='C0426D23-1927-4314-8736-A74B2EF7A039'
 
+#数据中台访问口令
+dms_token = '057A7F0E-F187-4975-8873-AF71666429AB'
+
 tstk::import(app_id = app_id)
 
 
